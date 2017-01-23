@@ -20,11 +20,11 @@ namespace NugetTest
             bool showHelp = false;
             var options = new OptionSet
             {
-                { "url=", u => _feedUrl = u },
-                { "username=", n => _feedUsername = n },
-                { "password=", n => _feedPassword = n },
-                { "package=", v => _packageId = v },
-                { "h|help", _ => showHelp = true }
+                { "url=", "Set the nuget feed url to test", u => _feedUrl = u },
+                { "username=", "Set the nuget feed username if required", n => _feedUsername = n },
+                { "password=", "Set the nuget feed password if required", n => _feedPassword = n },
+                { "package=", "Set the nuget package Id to search for", v => _packageId = v },
+                { "h|help", "Show this message", _ => showHelp = true }
             };
 
             options.Parse(args);
