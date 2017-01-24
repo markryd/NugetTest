@@ -29,8 +29,6 @@ namespace NugetTest
                 .GetMetadataAsync(packageId, false, false, NullLogger.Instance, CancellationToken.None);
 
             task.Wait();
-
-            Console.WriteLine("{0} results found", task.Result.Count());
         }
     }
 }

@@ -24,6 +24,8 @@ namespace NugetTest
                 { "username=", "Set the nuget feed username if required", n => _feedUsername = n },
                 { "password=", "Set the nuget feed password if required", n => _feedPassword = n },
                 { "package=", "Set the nuget package Id to search for", v => _packageId = v },
+                { "parallel=", "The number of simultaneous request threads", v => _parallel = int.Parse(v) },
+                { "count=", "The number of requests each thread will make", v => _count = int.Parse(v) },
                 { "h|help", "Show this message", _ => showHelp = true }
             };
 
@@ -35,12 +37,17 @@ namespace NugetTest
                 return;
             }
 
-            var t = Enumerable.Range(0, 20)
+            var t = Enumerable.Range(0, _parallel)
                .AsParallel()
-               .Select(_ => Task.Run(() =>
+               .Select(threadId => Task.Run(() =>
                {
-                   var adaptor = new NugetAdaptor(_feedUrl, _feedUsername, _feedPassword);
-                   adaptor.CreateReleaseTest(_packageId);
+                   for (int i = 0; i < _count; i++)
+                   {
+                       Console.WriteLine($"Beginning request {i} for thread {threadId}");
+                       var adaptor = new NugetAdaptor(_feedUrl, _feedUsername, _feedPassword);
+                       adaptor.CreateReleaseTest(_packageId);
+                       Console.WriteLine($"Finishing request {i} for thread {threadId}");
+                   }
                }))
                .ToArray();
 
@@ -51,5 +58,7 @@ namespace NugetTest
         string _feedUsername = "";
         string _feedPassword = "";
         string _packageId = "halibut";
+        private int _parallel = 20;
+        private int _count = 1;
     }
 }
